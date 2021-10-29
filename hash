@@ -1,0 +1,110 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <ctime>
+using namespace std;
+
+char dod1(int a) {
+	if (a <= 25)
+		return char(int('a') + a);
+	else return char(int('0') + a - 26);
+}
+
+const int m = 99991; //размер хеш таблицы
+int hashfunction(string str) {
+	int h = 0;
+	for (int i = 0; i < str.size(); i++)
+		h = (h * 36 + int(str[i])) % m;
+	return h;
+}
+
+
+void heshinit(int n, char number) {
+	string forFile = "FUCKING_HASH";
+	forFile.push_back(number);
+	forFile + ".txt";
+	ofstream fin(forFile); //чтение
+	int maxVal = 35;
+	int* mass;
+	mass = new int[n];
+	mass[0] = -1;
+	for (int j = 1; j < n; j++) {
+		mass[j] = 0;
+	}
+	string s;
+	while (mass[n - 1] < maxVal) {
+		s = "";
+		mass[0]++;
+		for (int i = 0; i < n; i++) {
+			if (mass[i] > maxVal) {
+				if (mass[i] > maxVal) {
+					mass[i] = 0;
+					mass[i + 1]++;
+				}
+			}
+			s.push_back(dod1(mass[i]));
+		}
+		fin << hashfunction(s) << ' ' << s << endl;
+		cout << hashfunction(s) << ' ' << s << endl;
+	}
+	delete[] mass;
+	fin.close();
+}
+
+int counter(int n, char number) {
+	string forFile = "HASH";
+	forFile.push_back(number);
+	forFile + ".txt";
+	ifstream fin(forFile);
+	int mass[m];
+	int key = 0;
+	string s;
+	for (int i = 0; i < m; i++)
+		mass[i] = -1;
+	while (!fin.eof()) {
+		fin >> key >> s;
+		mass[key] = mass[key] + 1;
+	}
+	key = 0;
+	for (int i = 0; i < m; i++) {
+		if (mass[i] != -1)
+			key = key + mass[i];
+	}
+	fin.close();
+	return key;
+}
+
+int isequal(int n, string value) {
+
+	string forFile = "HASH";
+	forFile.push_back(char(int('0') + value.size()));
+	forFile + ".txt";
+	int key = 0;
+	string s = "";
+	ifstream fin(forFile);
+	while (!fin.eof()) {
+		fin >> key >> s;
+		if (key == n)
+			if (value == s) break;;
+	}
+
+	fin.close();
+	return 0;
+}
+
+int main()
+{
+	string s;
+	cin >> s;
+	//heshinit(3, '3');
+	//heshinit(4, '4');
+	//heshinit(5, '5');
+	heshinit(6, '6');
+	//cout << counter(3, '3');
+	cout << hashfunction("ad7") << endl;
+	int start = clock();
+	isequal(hashfunction("ad77"), "ad77");
+	int end = clock();
+	int t = (end - start);
+	cout << t;
+}
